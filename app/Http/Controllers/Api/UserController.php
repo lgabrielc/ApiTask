@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -55,7 +56,14 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $user = $this->userService->updateUser($request->all(), $id);
+            return response()->json($user, 200);
+        } catch (ValidationException $e) {
+            return response()->json($e->errors(), 422);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
     }
 
     /**
@@ -63,6 +71,11 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $this->userService->deleteUser($id);
+            return response()->json(['message' => 'User deleted successfully'], 200);
+        } catch (ModelNotFoundException $th) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
     }
 }
