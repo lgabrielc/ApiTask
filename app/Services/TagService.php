@@ -14,13 +14,6 @@ class TagService
     }
     public function createTag($data)
     {
-        $validator = Validator::make($data, [
-            'name' => 'required|string|min:2',
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
         $tag = Tag::create($data);
         return $tag;
     }

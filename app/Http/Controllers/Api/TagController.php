@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTagRequest;
+use App\Models\Tag;
 use App\Services\TagService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TagController extends Controller
@@ -17,7 +20,7 @@ class TagController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $tags = $this->tagService->getAllTags();
         return response()->json($tags, 200);
@@ -26,20 +29,16 @@ class TagController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTagRequest $request): JsonResponse
     {
-        try {
-            $tag = $this->tagService->createTag($request->all());
-            return response()->json($tag, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json($e->errors(), 422);
-        }
+        $tag = $this->tagService->createTag($request->all());
+        return response()->json($tag, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $id): JsonResponse
     {
         try {
             $tag = $this->tagService->getTagById($id);
@@ -52,7 +51,7 @@ class TagController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id): JsonResponse
     {
         try {
             $tag = $this->tagService->updateTag($request->all(), $id);
@@ -67,7 +66,7 @@ class TagController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         try {
             $this->tagService->deleteTag($id);
